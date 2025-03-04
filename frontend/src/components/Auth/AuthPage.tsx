@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import AuthForm from './AuthForm'; // Импортируем компонент авторизации
-import RegisterForm from './RegisterForm'; // Импортируем компонент регистрации
+import AuthForm from './AuthForm'; 
+import RegisterForm from './RegisterForm'; 
 import styles from './AuthPage.module.css';
 
 const AuthPage: React.FC = () => {
