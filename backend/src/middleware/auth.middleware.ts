@@ -1,11 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { User } from "../models/user.model";
+import { AppDataSource } from "../config/db";
+
+const userRepository = AppDataSource.getRepository(User)
 
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
-
 
 declare module "express-serve-static-core" {
   interface Request {

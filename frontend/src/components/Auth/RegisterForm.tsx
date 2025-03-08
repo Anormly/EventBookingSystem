@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import styles from './RegisterForm.module.css';
-import { resolve } from 'path';
-import { rejects } from 'assert';
+import { useNavigate } from 'react-router-dom';
 
 const registerUser = async (userData: { email: string; username: string; password: string }):
  Promise<void> => {
-  const response = await fetch('http://localhost:5000/api/register', {
+  const response = await fetch('http://localhost:5000/api/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -21,13 +20,18 @@ const registerUser = async (userData: { email: string; username: string; passwor
   await response.json(); 
 };
 
-const RegisterForm: React.FC = () => {
+interface RegisterFormProps {
+  onSuccess: () => void;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,13 +41,14 @@ const RegisterForm: React.FC = () => {
     if (password !== confirmPassword) {
       setError("Пароли не совпадают");
       setLoading(false);
-      return; // Выход из функции, если пароли не совпадают
+      return; // выход если пароли не совпадают
     }
 
     try {
       await registerUser({ email, username, password });
       console.log('Регистрация успешна:', { username });
-      // Добавить перенаправление
+      onSuccess();
+      navigate('/login', { replace: true });
     } catch (err: unknown) {
       if(err instanceof Error){
         setError(err.message || "Ошибка регистрации, попробуйте ещё раз");

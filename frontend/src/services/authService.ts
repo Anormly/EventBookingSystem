@@ -1,13 +1,19 @@
-const API_URL = 'http://localhost:5000/api/login'; 
+/* файл authService.ts */
 
-export const login = async (emailOrUsername: string, password: string) => {
+import { AuthResponse, LoginCredentials } from "../types/authTypes";
+
+const API_URL = 'http://localhost:5000/api/auth'; 
+
+export const login = async (
+  credentials: LoginCredentials
+) : Promise<AuthResponse> => {
   try {
     const response = await fetch(`${API_URL}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ emailOrUsername, password }),
+      body: JSON.stringify( credentials ),
     });
 
     if (!response.ok) {
@@ -16,9 +22,9 @@ export const login = async (emailOrUsername: string, password: string) => {
     }
 
     const data = await response.json();
-    return data; // Возвращаем данные, полученные от сервера
+    console.log(data);
+    return data; 
 
-    
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(error.message || 'Ошибка при выполнении запроса');
