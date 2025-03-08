@@ -1,33 +1,44 @@
-import React, { useState } from 'react';
+/* файл AuthForm.tsx */
+
+import React, {  useState } from 'react';
 import styles from './AuthForm.module.css';
 import { login } from '../../services/authService';
 import useAuth from '../../hooks/useAuth'; 
+import { LoginCredentials } from '../../types/authTypes';
+import { useNavigate } from 'react-router-dom'; // Импортируем useNavigate
+import { useEffect } from 'react';
 
 const AuthForm: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const [emailOrUsername, setEmailOrUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const { login: setAuth } = useAuth();
+  const [password, setPassword] = useState(''); 
+  const { login: authLogin } = useAuth();
+  const navigate = useNavigate();
+
+// AuthForm.tsx
+useEffect(() => {
+  if (isAuthenticated) {
+    console.log('Triggering redirect to /profile');
+    navigate('/profile', { replace: true });
+  }
+}, [isAuthenticated, navigate]); // Добавьте navigate в зависимости
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { token, user } = await login(emailOrUsername, password); // Вызываем функцию login
-      localStorage.setItem('token', token); // Сохраняем токен в localStorage
-      setAuth(); // Устанавливаем аутентификацию
-      console.log('Авторизация успешна:', user);
-
-      // Здесь можно перенаправить пользователя на другую страницу
+      const credentials: LoginCredentials = {
+        emailOrUsername,
+        password,
+      };
+      console.log('Before login request'); // <-- Новая строка
+      const { token, user } = await login(credentials);
+      console.log('After login response:', { token, user }); // <-- Новая строка
+      authLogin(user, token); 
+    
     } catch (error) {
       console.error('Ошибка авторизации:', error);
-      if (error instanceof Error) {
-        alert("Незивестная ошибка")
-        //throw new Error(error.message || 'Ошибка при выполнении запроса');
-      } else {
-        alert(new Error("Неизваестная ошибка"));
-        //throw new Error('Неизвестная ошибка');
-      }
-       // Показываем сообщение об ошибке
-    }
+      alert('Ошибка авторизации');
+    } 
   };
 
   return (

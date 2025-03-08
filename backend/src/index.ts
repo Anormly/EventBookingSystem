@@ -1,21 +1,28 @@
 import express from "express";
-import cors from "cors";
-import helmet from "helmet";
 import dotenv from "dotenv";
+import cors from "cors";
+import { AppDataSource } from "./config/db";
+import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
+// Middlewares
 app.use(express.json());
 app.use(cors());
-app.use(helmet());
 
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+// Подключаем маршруты
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+
+// Запускаем сервер
+AppDataSource.initialize()
+  .then(() => {
+    console.log("База данных подключена");
+    app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
+  })
+  .catch((err) => console.error("Ошибка подключения к БД:", err));
