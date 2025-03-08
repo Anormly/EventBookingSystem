@@ -13,6 +13,10 @@ import UserProfilePage from './components/UserProfile/UserProfilePage';
 import './App.css';
 
 const App: React.FC = () => {
+<<<<<<< Updated upstream
+=======
+  const {  isAuthenticated } = useAuth();
+>>>>>>> Stashed changes
   return (
     <Router>
       <Header />

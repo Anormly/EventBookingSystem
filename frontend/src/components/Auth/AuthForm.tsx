@@ -54,7 +54,7 @@ const AuthForm: React.FC = () => {
             required
           />
         </div>
-        <button type="submit" className={styles.button}>Войти</button>
+        <button type="submit"  className={styles.button}>Войти</button>
       </form>
     </div>
   );
