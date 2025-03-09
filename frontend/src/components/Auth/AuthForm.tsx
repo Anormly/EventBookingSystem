@@ -16,30 +16,36 @@ const AuthForm: React.FC = () => {
   const navigate = useNavigate();
 
 // AuthForm.tsx
-useEffect(() => {
+/*useEffect(() => {
+  console.log('isAuthenticated:', isAuthenticated); 
   if (isAuthenticated) {
     console.log('Triggering redirect to /profile');
     navigate('/profile', { replace: true });
   }
-}, [isAuthenticated, navigate]); // Добавьте navigate в зависимости
+}, [isAuthenticated, navigate]);*/
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const credentials: LoginCredentials = {
-        emailOrUsername,
-        password,
-      };
-      console.log('Before login request'); // <-- Новая строка
-      const { token, user } = await login(credentials);
-      console.log('After login response:', { token, user }); // <-- Новая строка
-      authLogin(user, token); 
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const credentials: LoginCredentials = {
+      emailOrUsername,
+      password,
+    };
+    console.log('Before login request');
+    const { token, user } = await login(credentials);
+    console.log('After login response:', { token, user });
+
+    // Авторизация прошла успешно, обновляем состояние
+    authLogin(user, token);
     
-    } catch (error) {
-      console.error('Ошибка авторизации:', error);
-      alert('Ошибка авторизации');
-    } 
-  };
+    // Редиректим пользователя на профиль сразу после авторизации
+    navigate('/profile', { replace: true });
+  } catch (error) {
+    console.error('Ошибка авторизации:', error);
+    alert('Ошибка авторизации');
+  }
+};
+
 
   return (
     <div className={styles.container}>
