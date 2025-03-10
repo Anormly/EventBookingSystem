@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build: ./backend/auth-service
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/auth-service/.env
+    depends_on:
+      - db
+
+  booking-service:
+    build: ./backend/booking-service
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./backend/booking-service/.env
+    depends_on:
+      - db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - auth-service
+      - booking-service
+
+  db:
+    image: postgres:15
+    container_name: shared-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: anermly
+      POSTGRES_PASSWORD: f3bf39b31
+      POSTGRES_DB: event_booking
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+    networks:
+      - shared-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  shared-network:
+    driver: bridge
