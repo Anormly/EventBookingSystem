@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
-import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
-  
+
+  const navigate = useNavigate();
+
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
@@ -16,27 +17,15 @@ const Header: React.FC = () => {
           <li><Link to="/">Главная</Link></li>
           <li><Link to="/events">Мероприятия</Link></li>
           <li><Link to="/booking">Бронирование</Link></li>
-          
-          {isAuthenticated ? (
-            <>
-              <li><Link to="/profile">Личный кабинет</Link></li>
-              <li>
-                <button 
-                  onClick={logout}
-                  className={styles.logoutButton}
-                  aria-label="Выйти из системы"
-                >
-                  Выйти
-                </button>
-              </li>
-            </>
-          ) : (
-            <>
-            <li><Link to='/auth'>Auth</Link></li>
-              <li><Link to="/login">Вход</Link></li>
-              <li><Link to="/register">Регистрация</Link></li>
-            </>
-          )}
+          <li><button onClick={ ()=>{
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/login')
+          }}>выход</button></li>
+        
+          <li><Link to="/login">Вход</Link></li>
+          <li><Link to="/register">Регистрация</Link></li>
+  
         </ul>
       </nav>
     </header>

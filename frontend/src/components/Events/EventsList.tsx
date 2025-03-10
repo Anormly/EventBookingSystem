@@ -3,25 +3,19 @@ import { fetchEvents } from '../../services/eventServices';
 import EventItem from './EventItem';
 import styles from './EventsList.module.css';
 import { EventType } from '../../types/eventTypes';
-import Loader from '../common/Loader'; // Импортируем Loader
 
 const EventsList: React.FC = () => {
   const [events, setEvents] = useState<EventType[]>([]);
-  const [loading, setLoading] = useState<boolean>(true); // Состояние загрузки
 
   useEffect(() => {
     const loadEvents = async () => {
       const eventsData = await fetchEvents();
       setEvents(eventsData);
-      setLoading(false); // Устанавливаем загрузку в false после получения данных
     };
 
     loadEvents();
   }, []);
 
-  if (loading) {
-    return <Loader />; // Показываем индикатор загрузки, пока данные загружаются
-  }
 
   // Заглушки для мероприятий
   const placeholderEvents: EventType[] = [

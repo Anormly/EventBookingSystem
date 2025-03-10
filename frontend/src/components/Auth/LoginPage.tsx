@@ -8,7 +8,7 @@ const LoginPage: React.FC = () => {
     <div className={styles.container}>
       <h1>Авторизация</h1>
       <p>Пожалуйста, войдите в систему</p>
-      <AuthForm />
+      <AuthForm onSuccess={ () => {}}/>
     </div>
   );
 };

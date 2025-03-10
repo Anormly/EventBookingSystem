@@ -2,18 +2,23 @@
 
 import React, { useState } from 'react';
 import styles from './UserProfilePage.module.css';
-import useAuth from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const UserProfilePage: React.FC = () => {
-  const { user, logout } = useAuth();
-
-  if (!user) {
-    return null; // Прерываем рендеринг, если пользователя нет
-  }
+  const navigate = useNavigate();
+  const user = localStorage.getItem('user');
+  
+  useEffect(() => {
+    if(!localStorage.getItem('token')){
+      console.log("NOT AUTHENTICATED")
+      navigate('/login')
+    }
+  })
 
   return (
     <div className={styles.container}>
-      <h1>Личный кабинет { user?.username }</h1>
+      <h1>Личный кабинет { user }</h1>
       
       {/*Заглушки */}
       <section className={styles.bookingHistory}>
@@ -32,11 +37,11 @@ const UserProfilePage: React.FC = () => {
       <section className={styles.profileInfo}>
         <div className={styles.infoItem}>
           <span>Email:</span>
-          <span>{user.email}</span>
+          <span>{ user }</span>
         </div>
         <div className={styles.infoItem}>
           <span>Имя пользователя:</span>
-          <span>{user.username}</span>
+          <span>{ }</span>
         </div>
       </section>
       <section className={styles.profileSettings}>
@@ -44,11 +49,11 @@ const UserProfilePage: React.FC = () => {
         <form className={styles.settingsForm}>
           <div className={styles.formGroup}>
             <label htmlFor="username">Имя пользователя:</label>
-            <input type="text" id="username" defaultValue={user.username} />
+            <input type="text" id="username" />
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="email">Электронная почта</label>
-            <input type="email" id="email" defaultValue={user.email} />
+            <input type="email" id="email" />
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="password">Пароль</label>
@@ -59,13 +64,15 @@ const UserProfilePage: React.FC = () => {
       </section>
 
       <button 
-        onClick={logout}
+        // onClick={ logout }
         className={styles.logoutButton}
       >
         Выйти из системы
       </button>
     </div>
   );
+
+  
 };
 
 export default UserProfilePage;

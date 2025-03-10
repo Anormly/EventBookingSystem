@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { User } from '../types/authTypes';
-import { Navigate } from 'react-router-dom';
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -12,14 +11,27 @@ const useAuth = () => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     
+    console.log("Use Auth Use Effect Token:", token)
+    console.log("Use Auth Use Effect User:", storedUser)
+
     if (token && storedUser) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsedUser = JSON.parse(storedUser); // Парсим строку в объект
+        setIsAuthenticated(true);
+        setUser(parsedUser);
+      } catch (error) {
+        console.error('Ошибка при парсинге пользователя:', error);
+        localStorage.removeItem('user'); // Удаляем невалидные данные
+      }
+    }
+    else{
+      setIsAuthenticated(false); // Явно указываем, что пользователь не авторизован
+      setUser(null);
     }
   }, []);
 
   const login = (userData: User, token: string) => {
- console.log('Login called with:', { userData, token }); // <-- Новая строка
+    console.log('Login called with:', { userData, token }); 
 
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
