@@ -36,6 +36,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -55,6 +56,39 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
       setLoading(false);
     }
   };
+=======
+// AuthForm.tsx
+/*useEffect(() => {
+  console.log('isAuthenticated:', isAuthenticated); 
+  if (isAuthenticated) {
+    console.log('Triggering redirect to /profile');
+    navigate('/profile', { replace: true });
+  }
+}, [isAuthenticated, navigate]);*/
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    const credentials: LoginCredentials = {
+      emailOrUsername,
+      password,
+    };
+    console.log('Before login request');
+    const { token, user } = await login(credentials);
+    console.log('After login response:', { token, user });
+
+    // Авторизация прошла успешно, обновляем состояние
+    authLogin(user, token);
+    
+    // Редиректим пользователя на профиль сразу после авторизации
+    navigate('/profile', { replace: true });
+  } catch (error) {
+    console.error('Ошибка авторизации:', error);
+    alert('Ошибка авторизации');
+  }
+};
+
+>>>>>>> 77abfb6876baabb7e082a908a4c5472f0c784fc8
 
   return (
     <div className={styles.container}>
