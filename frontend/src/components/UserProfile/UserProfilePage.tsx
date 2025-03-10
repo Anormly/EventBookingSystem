@@ -7,18 +7,19 @@ import { useEffect } from 'react';
 
 const UserProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const user = localStorage.getItem('user');
-  
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   useEffect(() => {
     if(!localStorage.getItem('token')){
       console.log("NOT AUTHENTICATED")
       navigate('/login')
     }
+    console.log(user)
   })
 
   return (
     <div className={styles.container}>
-      <h1>Личный кабинет { user }</h1>
+      <h1>Личный кабинет { user.username || "Не указано" }</h1>
       
       {/*Заглушки */}
       <section className={styles.bookingHistory}>
@@ -37,11 +38,11 @@ const UserProfilePage: React.FC = () => {
       <section className={styles.profileInfo}>
         <div className={styles.infoItem}>
           <span>Email:</span>
-          <span>{ user }</span>
+          <span>{ user.email }</span>
         </div>
         <div className={styles.infoItem}>
           <span>Имя пользователя:</span>
-          <span>{ }</span>
+          <span>{ user.username }</span>
         </div>
       </section>
       <section className={styles.profileSettings}>
@@ -49,11 +50,11 @@ const UserProfilePage: React.FC = () => {
         <form className={styles.settingsForm}>
           <div className={styles.formGroup}>
             <label htmlFor="username">Имя пользователя:</label>
-            <input type="text" id="username" />
+            <input type="text" id="username" defaultValue={user.username}/>
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="email">Электронная почта</label>
-            <input type="email" id="email" />
+            <input type="email" id="email" defaultValue={ user.email }/>
           </div>
           <div className={styles.formGroup}>
             <label htmlFor="password">Пароль</label>

@@ -12,12 +12,11 @@ const useAuth = () => {
 
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-<<<<<<< HEAD
+
     
     console.log("Use Auth Use Effect Token:", token)
     console.log("Use Auth Use Effect User:", storedUser)
-=======
->>>>>>> 77abfb6876baabb7e082a908a4c5472f0c784fc8
+
 
     if (token && storedUser) {
       try {
@@ -42,11 +41,7 @@ const useAuth = () => {
   }, [isAuthenticated, user]);
 
   const login = (userData: User, token: string) => {
-<<<<<<< HEAD
     console.log('Login called with:', { userData, token }); 
-=======
-    console.log('Login called with:', { userData, token });
->>>>>>> 77abfb6876baabb7e082a908a4c5472f0c784fc8
 
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(userData));
