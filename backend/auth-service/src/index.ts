@@ -4,6 +4,8 @@ import cors from "cors";
 import { AppDataSource } from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "./config/swagger.json";
 
 dotenv.config();
 
@@ -12,6 +14,8 @@ const app = express();
 // Middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Подключаем маршруты
 app.use("/api/auth", authRoutes);

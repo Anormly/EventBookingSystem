@@ -1,12 +1,26 @@
-import express, { Request, Response } from 'express';  // Импортируем express и типы Request, Response
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import { AppDataSource } from "./config/db";
+import eventRoutes from "./routes/event.routes";
+import bookingRoutes from "./routes/booking.routes";
+
+dotenv.config();
 
 const app = express();
-const port = 5001;
 
-app.get('/', (req: Request, res: Response) => {  // Явно указываем типы для req и res
-  res.send('Booking service is running');
-});
+app.use(express.json());
+app.use(cors());
 
-app.listen(port, () => {
-  console.log(`Booking service is listening on port ${port}`);
-});
+// Роуты
+app.use("/api/events", eventRoutes);
+app.use("/api/bookings", bookingRoutes);
+
+const PORT = process.env.PORT || 5001;
+
+AppDataSource.initialize()
+    .then(() => {
+        console.log("База данных подключена");
+        app.listen(PORT, () => console.log(`Booking service запущен на порту ${PORT}`));
+    })
+    .catch((err) => console.error("Ошибка подключения к БД:", err));
