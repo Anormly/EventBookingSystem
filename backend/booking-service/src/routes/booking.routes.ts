@@ -12,6 +12,10 @@ router.post("/:eventId", authMiddleware, async (req: Request, res: Response): Pr
 
   try {
     const eventId = Number(req.params.eventId);
+    if (isNaN(eventId)) {
+      res.status(400).json({ error: "Некорректный ID события" });
+      return;
+    }
     const userId = req.user.id;
     const booking = await bookTicket(eventId, userId);
     res.json(booking);

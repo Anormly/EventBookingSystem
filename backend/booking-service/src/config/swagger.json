@@ -1,0 +1,223 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Booking Service API",
+        "version": "1.0.0",
+        "description": "Документация API для службы бронирования"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5001/api",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/events": {
+            "get": {
+                "summary": "Получить список активных событий",
+                "description": "Возвращает список всех предстоящих (незавершенных) событий",
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "title": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            },
+                                            "event_date": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "location": {
+                                                "type": "string"
+                                            },
+                                            "available_tickets": {
+                                                "type": "integer"
+                                            },
+                                            "created_by": {
+                                                "type": "integer"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            },
+            "post": {
+                "summary": "Создать событие",
+                "description": "Создает новое событие (только для авторизованных пользователей)",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Концерт"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Описание мероприятия"
+                                    },
+                                    "event_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-03-30T18:00:00Z"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "Москва, Кремль"
+                                    },
+                                    "available_tickets": {
+                                        "type": "integer",
+                                        "example": 100
+                                    }
+                                },
+                                "required": [
+                                    "title",
+                                    "event_date",
+                                    "available_tickets"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Событие успешно создано",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "event_date": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "location": {
+                                            "type": "string"
+                                        },
+                                        "available_tickets": {
+                                            "type": "integer"
+                                        },
+                                        "created_by": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь не авторизован"
+                    },
+                    "400": {
+                        "description": "Некорректные данные для события"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            }
+        },
+        "/bookings/{eventId}": {
+            "post": {
+                "summary": "Забронировать билет",
+                "description": "Позволяет пользователю забронировать билет на указанное событие",
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "eventId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "description": "ID события"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Бронирование успешно",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "user_id": {
+                                            "type": "integer"
+                                        },
+                                        "event_id": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "confirmed"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Билетов больше нет или некорректные данные"
+                    },
+                    "401": {
+                        "description": "Пользователь не авторизован"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
