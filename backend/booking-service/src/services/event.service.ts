@@ -6,15 +6,25 @@ import { MoreThan, LessThan } from "typeorm";
 const eventRepository = AppDataSource.getRepository(Event);
 
 
-export const getActiveEvents = async (_req: Request, res: Response): Promise<Response> => {
+export const getActiveEvents = async (): Promise<Partial<Event>[]> => {
     try {
-        const events = await eventRepository.find({
-            where: { event_date: MoreThan(new Date()) },
-        });
-        return res.json(events); 
+        const events = await eventRepository
+            .createQueryBuilder("event")
+            .where("event.event_date > :now", { now: new Date() })
+            .select([
+                "event.id",
+                "event.title",
+                "event.description",
+                "event.event_date",
+                "event.available_tickets",
+                "event.created_by", // ✅ Передаем как число
+            ])
+            .getMany();
+
+        return events;
     } catch (error) {
         console.error("Ошибка при получении событий:", error);
-        return res.status(500).json({ error: "Ошибка при получении событий" }); 
+        return [];
     }
 };
 

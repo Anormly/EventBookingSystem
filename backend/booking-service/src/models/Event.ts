@@ -23,13 +23,13 @@ export class Event {
   available_tickets!: number;
 
   @Column()
-  created_by!: number; // Добавляем владельца ивента
+  created_by!: number; 
 
   @OneToMany(() => Booking, (booking) => booking.event)
   bookings!: Booking[];
 
   @ManyToOne(() => User, (user) => user.events)
-  user!: User; // Добавляем связь с User
+  user!: User; 
 }
 
-export default Event; // Добавляем экспорт
+export default Event; 

@@ -23,5 +23,5 @@ export class User {
   events!: Event[];
 }
 
-export default User; // Добавляем экспорт
+export default User; 
 

@@ -4,9 +4,9 @@ import { createEvent, updateEvent, getActiveEvents } from "../services/event.ser
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (_req: Request, res: Response) => {
     try {
-        const events = await getActiveEvents(req, res);
+        const events = await getActiveEvents();
         res.json(events);
     } catch (error) {
         console.error("Ошибка получения событий:", error);
