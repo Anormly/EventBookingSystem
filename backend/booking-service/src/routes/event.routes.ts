@@ -7,7 +7,14 @@ const router = Router();
 router.get("/", async (_req: Request, res: Response) => {
     try {
         const events = await getActiveEvents();
-        res.json(events);
+        
+        // Преобразуем даты перед отправкой клиенту
+        const response = events.map(event => ({
+            ...event,
+            event_date: event.event_date!.toISOString()
+        }));
+        
+        res.json(response);
     } catch (error) {
         console.error("Ошибка получения событий:", error);
         res.status(500).json({ error: "Ошибка при получении событий" });

@@ -1,32 +1,12 @@
+// src/components/AuthForm.tsx
 import React, { useState } from 'react';
 import styles from './AuthForm.module.css';
 import { useNavigate } from 'react-router-dom';
-import { AuthResponse, LoginCredentials } from '../../types/authTypes';
+import authService from '../../services/authService';
+import { LoginCredentials } from '../../types/authTypes';
 
 interface AuthFormProps {
   onSuccess: () => void;
-}
-
-const loginUser = async (
-  credentials: LoginCredentials
-) : Promise<AuthResponse> => {
-  const response = await fetch('http://localhost:5000/api/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify( credentials ),
-  });
-
-  if (!response.ok) {
-    console.log(credentials)
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Ошибка регистрации');;
-  } 
-  
-  const data = await response.json();
-
-  return data;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
@@ -39,21 +19,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('')
+    setError('');
 
     try {
-      const data = await loginUser({ emailOrUsername, password });
-      console.log('авторизация успешна')
+      const credentials: LoginCredentials = {
+        emailOrUsername,
+        password
+      };
+      
+      await authService.login(credentials);
       onSuccess();
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user))
-      console.log(data)
       navigate('/profile');
-    } 
-    catch (err: unknown) {
-      setError('Ошибка авторизации, попробуйте ещё раз');
-    }
-    finally {
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || 'Ошибка авторизации, попробуйте ещё раз');
+      } else {
+        setError('Ошибка авторизации, попробуйте ещё раз');
+      }
+    } finally {
       setLoading(false);
     }
   };
@@ -86,9 +69,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ onSuccess }) => {
         <button type="submit" className={styles.button} disabled={loading}>
           { loading ? 'Загрузка...'  : 'Войти'}
         </button>
+
       </form>
     </div>
   );
 };
 
 export default AuthForm;
+
+

@@ -8,3 +8,13 @@ h1 {
   margin-bottom: 20px;
   color: #333;
 }
+
+.eventLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.eventLink:hover h2 {
+  color: #0066cc;
+  text-decoration: underline;
+}

@@ -8,11 +8,13 @@ interface EventItemProps {
 
 const EventItem: React.FC<EventItemProps> = ({ event }) => {
   return (
-    <div className={styles.card}>
-      <h2 className={styles.title}>{event.title}</h2>
-      <p className={styles.date}>{event.date}</p>
-      <p className={styles.description}>{event.description}</p>
-      <button className={styles.bookButton}>Забронировать</button>
+    <div className={styles.eventCard}>
+      <h3>{event.title}</h3>
+      <p>Дата: {event.date}</p>
+      <p>{event.description}</p>
+      {event.available_tickets !== undefined && (
+        <p>Доступно билетов: {event.available_tickets}</p>
+      )}
     </div>
   );
 };

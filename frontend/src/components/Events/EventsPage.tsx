@@ -7,7 +7,8 @@ const EventsPage: React.FC = () => {
     <div className={styles.container}>
       <h1>Мероприятия</h1>
       <p>Здесь вы можете найти все доступные мероприятия.</p>
-      <EventsList /> {/* Добавляем список мероприятий */}
+      <p>aboba</p>
+      <EventsList />
     </div>
   );
 };

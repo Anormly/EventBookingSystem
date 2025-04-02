@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
 import { Booking } from "./Booking";
 import { User } from "./User"; // Убедись, что этот файл существует
 
@@ -16,19 +16,20 @@ export class Event {
   @Column({ nullable: true })
   location?: string;
 
-  @Column()
+  @Column({ type: "timestamp" }) // Важно указать тип
   event_date!: Date;
 
   @Column()
   available_tickets!: number;
 
-  @Column()
+  @Column({ name: 'created_by', nullable: true})
   created_by!: number; 
 
   @OneToMany(() => Booking, (booking) => booking.event)
   bookings!: Booking[];
 
   @ManyToOne(() => User, (user) => user.events)
+  @JoinColumn({ name: "created_by"})
   user!: User; 
 }
 

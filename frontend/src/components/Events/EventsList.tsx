@@ -1,50 +1,71 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchEvents } from '../../services/eventServices';
-import EventItem from './EventItem';
 import styles from './EventsList.module.css';
-import { EventType } from '../../types/eventTypes';
 
 const EventsList: React.FC = () => {
-  const [events, setEvents] = useState<EventType[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const loadEvents = async () => {
-      const eventsData = await fetchEvents();
-      setEvents(eventsData);
+      try {
+        const response = await fetch('http://localhost:5001/api/events');
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        console.log('Received events data:', data); // Добавьте логирование
+        setEvents(data);
+      } catch (err) {
+        console.error('Error loading events:', err);
+        setError('Не удалось загрузить мероприятия');
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadEvents();
   }, []);
 
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return 'Неверная дата';
+      
+      return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (err) {
+      console.error('Error formatting date:', err);
+      return 'Неверный формат даты';
+    }
+  };
 
-  // Заглушки для мероприятий
-  const placeholderEvents: EventType[] = [
-    {
-      id: 1,
-      title: 'Концерт классической музыки',
-      date: '15 марта 2023',
-      description: 'Присоединяйтесь к нам на вечер классической музыки с известными исполнителями.',
-    },
-    {
-      id: 2,
-      title: 'Выставка современного искусства',
-      date: '20 апреля 2023',
-      description: 'Не пропустите уникальную выставку современных художников.',
-    },
-    {
-      id: 3,
-      title: 'Техническая конференция',
-      date: '5 мая 2023',
-      description: 'Обсуждение последних тенденций в области технологий и инноваций.',
-    },
-  ];
+  if (loading) return <div>Загрузка мероприятий...</div>;
+  if (error) return <div className={styles.error}>{error}</div>;
 
   return (
     <div className={styles.container}>
       <h1>Список мероприятий</h1>
-      {(events.length > 0 ? events : placeholderEvents).map(event => (
-        <EventItem key={event.id} event={event} />
-      ))}
+      {events.length === 0 ? (
+        <div>Мероприятий пока нет...</div>
+      ) : (
+        events.map(event => (
+          <div key={event.id} className={styles.eventCard}>
+            <Link to={`/events/${event.id}`} className={styles.eventLink}>
+              <h2>{event.title}</h2>
+            </Link>
+            <p>Дата: {formatDate(event.event_date)}</p>
+            <p>{event.description || 'Описание отсутствует'}</p>
+            <p>Доступно билетов: {event.available_tickets}</p>
+          </div>
+        ))
+      )}
     </div>
   );
 };

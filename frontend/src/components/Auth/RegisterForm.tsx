@@ -1,36 +1,21 @@
+// src/components/RegisterForm.tsx
 import React, { useState } from 'react';
 import styles from './RegisterForm.module.css';
 import { useNavigate } from 'react-router-dom';
-
-const registerUser = async (userData: { email: string; username: string; password: string }):
- Promise<void> => {
-  const response = await fetch('http://localhost:5000/api/auth/register', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userData),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Ошибка регистрации');
-  }
-
-  await response.json(); 
-};
+import authService from '../../services/authService';
+import { RegisterCredentials } from '../../types/authTypes';
 
 interface RegisterFormProps {
   onSuccess: () => void;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,19 +26,24 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     if (password !== confirmPassword) {
       setError("Пароли не совпадают");
       setLoading(false);
-      return; // выход если пароли не совпадают
+      return;
     }
 
     try {
-      await registerUser({ email, username, password });
+      const credentials: RegisterCredentials = {
+        email,
+        username,
+        password // Используем password вместо password_hash
+      };
+      
+      await authService.register(credentials);
       console.log('Регистрация успешна:', { username });
       onSuccess();
       navigate('/login', { replace: true });
     } catch (err: unknown) {
-      if(err instanceof Error){
+      if (err instanceof Error) {
         setError(err.message || "Ошибка регистрации, попробуйте ещё раз");
-      }
-      else{
+      } else {
         setError("Ошибка регистрации, попробуйте ещё раз");
       }
     } finally {

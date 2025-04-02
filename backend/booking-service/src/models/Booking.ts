@@ -1,26 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "typeorm";
 import { Event } from "./Event";
 import { User } from "./User";
 
 @Entity("bookings")
 export class Booking {
-  @PrimaryGeneratedColumn()
-  id!: number;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
-  @ManyToOne(() => Event, (event) => event.bookings)
-  event!: Event;
+    @ManyToOne(() => Event, (event) => event.bookings)
+    @JoinColumn({ name: "event_id" })
+    event!: Event;
 
-  @ManyToOne(() => User, (user) => user.bookings)
-  user!: User;
+    @ManyToOne(() => User, (user) => user.bookings)
+    @JoinColumn({ name: "user_id" })
+    user!: User;
 
-  @Column()
-  status!: string; // Например, "booked", "cancelled"
+    @Column()
+    status!: string;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  created_at!: Date;
+    @Column({ name: "created_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+    createdAt!: Date;
 
-  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
-  updated_at!: Date;
+    @Column({ name: "updated_at", type: "timestamp", default: () => "CURRENT_TIMESTAMP", onUpdate: "CURRENT_TIMESTAMP" })
+    updatedAt!: Date;
 }
-
-export default Booking; // Добавляем экспорт

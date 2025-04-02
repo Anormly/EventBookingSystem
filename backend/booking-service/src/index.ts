@@ -6,6 +6,7 @@ import eventRoutes from "./routes/event.routes";
 import bookingRoutes from "./routes/booking.routes";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "./config/swagger.json";
+import bookingRouter from './routes/booking.routes';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Роуты
 app.use("/api/events", eventRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use('/api/bookings', bookingRouter);
 
 const PORT = process.env.PORT || 5001;
 
@@ -26,4 +28,4 @@ AppDataSource.initialize()
         console.log("База данных подключена");
         app.listen(PORT, () => console.log(`Booking service запущен на порту ${PORT}`));
     })
-    .catch((err) => console.error("Ошибка подключения к БД:", err));
+    .catch((err: Error) => console.error("Ошибка подключения к БД:", err));

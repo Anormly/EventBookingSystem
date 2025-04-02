@@ -2,10 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Header.module.css';
 import { useNavigate } from 'react-router-dom';
+import { isAuthenticated, logout } from '../../utils/authHelper';
 
 const Header: React.FC = () => {
-
   const navigate = useNavigate();
+  const authenticated = isAuthenticated();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <header className={styles.header}>
@@ -17,15 +23,18 @@ const Header: React.FC = () => {
           <li><Link to="/">Главная</Link></li>
           <li><Link to="/events">Мероприятия</Link></li>
           <li><Link to="/booking">Бронирование</Link></li>
-          <li><button onClick={ ()=>{
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            navigate('/login')
-          }}>выход</button></li>
-        
-          <li><Link to="/login">Вход</Link></li>
-          <li><Link to="/register">Регистрация</Link></li>
-  
+          
+          {authenticated ? (
+            <>
+              <li><button onClick={handleLogout}>Выход</button></li>
+              <li><Link to="/events/create">Создать событие</Link></li>
+            </>
+          ) : (
+            <>
+              <li><Link to="/login">Вход</Link></li>
+              <li><Link to="/register">Регистрация</Link></li>
+            </>
+          )}
         </ul>
       </nav>
     </header>

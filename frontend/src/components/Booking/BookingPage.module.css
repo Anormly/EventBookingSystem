@@ -1,7 +1,62 @@
 .container {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 20px;
 }
 
-h1 {
-  margin-bottom: 20px;
+.bookingList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bookingCard {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.eventInfo {
+  flex: 1;
+}
+
+.eventInfo h2 {
+  margin-top: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.cancelButton {
+  padding: 8px 16px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cancelButton:hover {
+  background-color: #cc0000;
+}
+
+.confirmed {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.cancelled {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.pending {
+  color: #ffc107;
+  font-weight: bold;
 }
