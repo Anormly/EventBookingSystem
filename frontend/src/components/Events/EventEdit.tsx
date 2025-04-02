@@ -4,6 +4,7 @@ import { fetchEvents } from '../../services/eventServices';
 import styles from './EventDetailPage.module.css';
 import { EventType } from '../../types/eventTypes';
 import { jwtDecode } from 'jwt-decode'
+import { decode } from 'punycode';
 
 interface JwtPayload {
   id: number;
@@ -24,6 +25,7 @@ const EditEventPage = () => {
   // Получаем текущего пользователя из localStorage
   const token : string | null = localStorage.getItem('token')
   const decoded_token = jwtDecode<JwtPayload>(token!)
+  setId(decoded_token.id)
 
   const formatDateForInput = (dateString: string) => {
     try {
