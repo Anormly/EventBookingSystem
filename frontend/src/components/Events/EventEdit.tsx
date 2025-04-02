@@ -3,6 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { fetchEvents } from '../../services/eventServices';
 import styles from './EventDetailPage.module.css';
 import { EventType } from '../../types/eventTypes';
+import { jwtDecode } from 'jwt-decode'
+
+interface JwtPayload {
+  id: number;
+  email: string;
+  username: string;
+}
 
 const EditEventPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,13 +19,12 @@ const EditEventPage = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [userId, setId] = useState(0)
 
   // Получаем текущего пользователя из localStorage
-  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-  console.log(currentUser)
-  const user_id = currentUser.id;
+  const token : string | null = localStorage.getItem('token')
+  const decoded_token = jwtDecode<JwtPayload>(token!)
 
-  // Функция для преобразования даты
   const formatDateForInput = (dateString: string) => {
     try {
       const date = new Date(dateString);
@@ -46,7 +52,7 @@ const EditEventPage = () => {
         }
         
         // Проверяем, принадлежит ли событие текущему пользователю
-        if (foundEvent.created_by !== user_id) {
+        if (foundEvent.created_by !== userId) {
           throw new Error('У вас нет прав на редактирование этого события');
         }
         
@@ -60,7 +66,7 @@ const EditEventPage = () => {
     };
 
     loadEvent();
-  }, [id, user_id, navigate]);
+  }, [id, userId, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!event) return;
@@ -83,7 +89,7 @@ const EditEventPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!event || !user_id) return;
+    if (!event || !userId) return;
     
     setSaving(true);
     setError('');
@@ -92,7 +98,7 @@ const EditEventPage = () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Подготавливаем данные для отправки
+
       const updates = {
         title: event.title,
         description: event.description,
@@ -108,8 +114,8 @@ const EditEventPage = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          created_by: user_id, // Добавляем ID текущего пользователя
-          updates: updates    // Данные для обновления
+          created_by: userId,
+          updates: updates
         })
       });
 

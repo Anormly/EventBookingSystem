@@ -4,6 +4,12 @@ import bcrypt from "bcrypt";
 import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import dotenv from "dotenv";
 
+interface JwtPayload {
+  id: number;
+  email: string;
+  username: string;
+}
+
 dotenv.config();
 
 const JWT_SECRET: Secret = process.env.JWT_SECRET || "default_secret";
@@ -19,7 +25,6 @@ export const generateToken = (payload: object): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN as SignOptions["expiresIn"] });
 };
 
-// Регистрация пользователя
 export const registerUser = async (email: string, username: string, password: string) => {
   const existingUser = await userRepository.findOne({ where: [{ email }, { username }] });
   if (existingUser) throw new Error("Пользователь с таким email или username уже существует");

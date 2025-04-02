@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './BookingPage.module.css';
+import { jwtDecode } from "jwt-decode"
+
+interface JwtPayload {
+  id: number;
+  email: string;
+  username: string;
+}
 
 interface Booking {
   id: number;
@@ -24,14 +31,16 @@ const BookingPage: React.FC = () => {
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const token : string | any = localStorage.getItem('token');
         
-        if (!user.id) {
+        const decoded_jwt = jwtDecode<JwtPayload>(token);
+        const user_id = decoded_jwt.id; 
+        
+        if (!user_id) {
           throw new Error('Пользователь не авторизован');
         }
     
-        const response = await fetch(`http://localhost:5001/api/bookings?user_id=${user.id}`, {
+        const response = await fetch(`http://localhost:5001/api/bookings?user_id=${user_id}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -56,6 +65,7 @@ const BookingPage: React.FC = () => {
   const handleCancel = async (bookingId: number) => {
     try {
       const token = localStorage.getItem('token');
+
       const response = await fetch(`http://localhost:5001/api/bookings/${bookingId}`, {
         method: 'DELETE',
         headers: {

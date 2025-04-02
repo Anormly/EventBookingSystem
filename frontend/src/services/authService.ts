@@ -10,14 +10,13 @@ import {
   
   const storeAuthData = (data: AuthResponse): void => {
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
   };
   
   export const clearAuthData = (): void => {
     localStorage.removeItem('token');
-    localStorage.removeItem('user');
   };
   
+  // ?
   export const getCurrentUser = (): User | null => {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
@@ -36,7 +35,7 @@ import {
       body: JSON.stringify({
         email: credentials.email,
         username: credentials.username,
-        password: credentials.password // Отправляем password, а не password_hash
+        password: credentials.password
       }),
     });
   
